@@ -20,13 +20,13 @@ const steps = [
 
 const ProcessSection = () => {
   return (
-    <section className="py-12 sm:py-16 md:py-20 bg-secondary">
+    <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-gray-900 to-black">
       <div className="container max-w-6xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-12 sm:mb-16">
-          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 text-foreground">
+          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 text-white">
             How We <span className="text-primary">Digitalize Your Business</span>
           </h2>
-          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto px-4">
+          <p className="text-base sm:text-lg text-gray-300 max-w-2xl mx-auto px-4">
             Three simple steps to transform your digital presence with our AI-powered automation solutions
           </p>
         </div>
@@ -41,10 +41,10 @@ const ProcessSection = () => {
                     <step.icon className="h-10 w-10 text-primary-foreground" />
                   </div>
                 </div>
-                <h3 className="font-display text-xl font-semibold mb-2 text-foreground">
+                <h3 className="font-display text-xl font-semibold mb-2 text-white">
                   {step.title}
                 </h3>
-                <p className="text-muted-foreground max-w-xs">
+                <p className="text-gray-300 max-w-xs">
                   {step.description}
                 </p>
               </div>

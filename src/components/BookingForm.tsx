@@ -66,61 +66,61 @@ const BookingForm = () => {
       [e.target.name]: e.target.value
     }));
   };
-  return <section id="booking" className="py-12 sm:py-16 md:py-20 bg-secondary">
+  return <section id="booking" className="py-12 sm:py-16 md:py-20 bg-gradient-to-b from-black to-gray-900">
       <div className="container max-w-4xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-8 sm:mb-12">
-          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 text-foreground">
+          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 text-white">
             Start Your <span className="text-primary">Digital Transformation</span>
           </h2>
-          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto px-4">
+          <p className="text-base sm:text-lg text-gray-300 max-w-2xl mx-auto px-4">
             Tell us about your project and we'll create a custom AI-powered automation solution for your business growth.
           </p>
         </div>
 
-        <Card className="bg-card border-border shadow-card hover-glow">
+        <Card className="bg-gray-900/80 border-red-900/30 shadow-card hover-glow backdrop-blur-sm">
           <CardHeader className="text-center p-4 sm:p-6">
-            <CardTitle className="font-display text-xl sm:text-2xl text-card-foreground">Book Your Free Consultation - Get Started Today!</CardTitle>
+            <CardTitle className="font-display text-xl sm:text-2xl text-white">Book Your Free Consultation - Get Started Today!</CardTitle>
           </CardHeader>
           <CardContent className="p-4 sm:p-6">
             <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="text-card-foreground font-medium">
+                  <Label htmlFor="name" className="text-gray-200 font-medium">
                     Full Name *
                   </Label>
-                  <Input id="name" name="name" value={formData.name} onChange={handleChange} required className="bg-input border-border focus:border-primary focus:ring-primary" placeholder="Your full name" />
+                  <Input id="name" name="name" value={formData.name} onChange={handleChange} required className="bg-gray-800 border-gray-700 focus:border-primary focus:ring-primary text-white" placeholder="Your full name" />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-card-foreground font-medium">
+                  <Label htmlFor="email" className="text-gray-200 font-medium">
                     Email Address *
                   </Label>
-                  <Input id="email" name="email" type="email" value={formData.email} onChange={handleChange} required className="bg-input border-border focus:border-primary focus:ring-primary" placeholder="your@email.com" />
+                  <Input id="email" name="email" type="email" value={formData.email} onChange={handleChange} required className="bg-gray-800 border-gray-700 focus:border-primary focus:ring-primary text-white" placeholder="your@email.com" />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="whatsapp" className="text-card-foreground font-medium">
+                <Label htmlFor="whatsapp" className="text-gray-200 font-medium">
                   WhatsApp Number *
                 </Label>
-                <Input id="whatsapp" name="whatsapp" type="tel" value={formData.whatsapp} onChange={handleChange} required className="bg-input border-border focus:border-primary focus:ring-primary" placeholder="+1 (555) 123-4567" />
+                <Input id="whatsapp" name="whatsapp" type="tel" value={formData.whatsapp} onChange={handleChange} required className="bg-gray-800 border-gray-700 focus:border-primary focus:ring-primary text-white" placeholder="+1 (555) 123-4567" />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="service" className="text-card-foreground font-medium">
+                <Label htmlFor="service" className="text-gray-200 font-medium">
                   Service Interested In *
                 </Label>
-                <select id="service" name="service" value={formData.service} onChange={handleChange} required className="w-full px-3 py-2 bg-input border border-border rounded-md focus:border-primary focus:ring-1 focus:ring-primary text-foreground">
+                <select id="service" name="service" value={formData.service} onChange={handleChange} required className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md focus:border-primary focus:ring-1 focus:ring-primary text-white">
                   <option value="">Select a service</option>
                   {services.map((service, index) => <option key={index} value={service}>{service}</option>)}
                 </select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="message" className="text-card-foreground font-medium">
+                <Label htmlFor="message" className="text-gray-200 font-medium">
                   Project Details
                 </Label>
-                <Textarea id="message" name="message" value={formData.message} onChange={handleChange} rows={4} className="bg-input border-border focus:border-primary focus:ring-primary resize-none" placeholder="Tell us more about your project, goals, and timeline..." />
+                <Textarea id="message" name="message" value={formData.message} onChange={handleChange} rows={4} className="bg-gray-800 border-gray-700 focus:border-primary focus:ring-primary resize-none text-white" placeholder="Tell us more about your project, goals, and timeline..." />
               </div>
 
               <Button type="submit" variant="hero" size="lg" className="w-full" disabled={isSubmitting}>
@@ -134,14 +134,14 @@ const BookingForm = () => {
         <div className="mt-8 sm:mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 text-center px-4">
           <div className="flex flex-col items-center space-y-2">
             <Mail className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
-            <p className="text-sm sm:text-base text-muted-foreground">Email us</p>
-            <a href="mailto:dizitup@outlook.com" className="text-sm sm:text-base text-foreground font-medium hover:text-primary transition-colors break-all">dizitup@outlook.com</a>
+            <p className="text-sm sm:text-base text-gray-400">Email us</p>
+            <a href="mailto:dizitup@outlook.com" className="text-sm sm:text-base text-gray-200 font-medium hover:text-primary transition-colors break-all">dizitup@outlook.com</a>
           </div>
           
           <div className="flex flex-col items-center space-y-2">
             <MessageSquare className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
-            <p className="text-sm sm:text-base text-muted-foreground">Response time</p>
-            <p className="text-sm sm:text-base text-foreground font-medium">Within 24 hours</p>
+            <p className="text-sm sm:text-base text-gray-400">Response time</p>
+            <p className="text-sm sm:text-base text-gray-200 font-medium">Within 24 hours</p>
           </div>
         </div>
       </div>

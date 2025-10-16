@@ -30,7 +30,7 @@ const Header = () => {
   ];
 
   return (
-    <header className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? "bg-background/90 backdrop-blur-md py-2 border-b border-border/50" : "py-4"}`}>
+    <header className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? "bg-black/90 backdrop-blur-md py-2 border-b border-red-900/30" : "py-4 bg-black/50"}`}>
       <div className="container mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between">
           {/* Logo */}

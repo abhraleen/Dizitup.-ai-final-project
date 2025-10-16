@@ -64,7 +64,7 @@ const ServicesGrid = () => {
   };
 
   return (
-    <section className="py-20 bg-background relative overflow-hidden cyber-grid">
+    <section className="py-20 bg-black relative overflow-hidden cyber-grid">
       {/* Enhanced animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Vertical data streams */}
@@ -110,10 +110,10 @@ const ServicesGrid = () => {
       
       <div className="container max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
         <div className="text-center mb-12 sm:mb-16 relative">
-          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 text-glitch hologram-flicker">
+          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 text-white hologram-flicker">
             AI-Powered <span className="text-primary glitch-text neon-flicker">Digital Solutions</span>
           </h2>
-          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto relative px-4">
+          <p className="text-base sm:text-lg text-gray-300 max-w-2xl mx-auto relative px-4">
             <span className="relative z-10">Comprehensive digitalisation and automation services to accelerate your business growth in India and beyond</span>
             {/* Text glow effect */}
             <div className="absolute inset-0 bg-primary/10 blur-xl opacity-50"></div>
@@ -131,7 +131,7 @@ const ServicesGrid = () => {
           {services.map((service, index) => (
             <Card 
               key={index} 
-              className="bg-card/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-all duration-300 card-glitch group relative overflow-hidden shadow-card"
+              className="bg-gray-900/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-all duration-300 card-glitch group relative overflow-hidden shadow-card"
               style={{ animationDelay: service.glitchDelay }}
             >
               {/* Card glow effect */}
@@ -143,13 +143,13 @@ const ServicesGrid = () => {
                     <service.icon className="h-12 w-12 text-primary" />
                   </div>
                 </div>
-                <CardTitle className="font-display text-xl text-card-foreground text-glitch">
+                <CardTitle className="font-display text-xl text-white text-glitch">
                   {service.title}
                 </CardTitle>
               </CardHeader>
               
               <CardContent className="text-center relative z-10">
-                <CardDescription className="text-muted-foreground mb-4 text-base leading-relaxed">
+                <CardDescription className="text-gray-300 mb-4 text-base leading-relaxed">
                   {service.description}
                 </CardDescription>
                 
@@ -171,7 +171,7 @@ const ServicesGrid = () => {
         </div>
         
         <div className="text-center mt-8 sm:mt-12">
-          <p className="text-sm sm:text-base text-muted-foreground mb-4 relative px-4">
+          <p className="text-sm sm:text-base text-gray-400 mb-4 relative px-4">
             <span className="relative z-10">Need something custom?</span>
             <div className="absolute inset-0 bg-primary/5 blur-lg opacity-50"></div>
           </p>

@@ -20,7 +20,7 @@ const Footer = () => {
       element?.scrollIntoView({ behavior: 'smooth' });
     }
   };
-  return <footer className="bg-background border-t border-border py-12">
+  return <footer className="bg-black border-t border-red-900/30 py-12">
       <div className="container max-w-6xl mx-auto px-4 sm:px-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
           {/* Logo & Description */}
@@ -34,7 +34,7 @@ const Footer = () => {
                 behavior: 'smooth'
               })} 
             />
-            <p className="text-muted-foreground mb-4 max-w-md">
+            <p className="text-gray-400 mb-4 max-w-md">
               AI-powered digitalisation agency helping brands scale smart with 
               cutting-edge automation technology, digital marketing, and creative services in India.
             </p>
@@ -43,7 +43,7 @@ const Footer = () => {
                 href="https://www.instagram.com/dizitup?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
                 target="_blank"
                 rel="noopener noreferrer" 
-                className="text-muted-foreground hover:text-primary transition-all duration-300 hover-scale group" 
+                className="text-gray-400 hover:text-primary transition-all duration-300 hover-scale group" 
                 aria-label="Instagram"
               >
                 <Instagram className="h-6 w-6 group-hover:neon-flicker group-hover:drop-shadow-[0_0_8px_hsl(var(--primary))]" />
@@ -52,7 +52,7 @@ const Footer = () => {
                 href="https://www.linkedin.com/company/dizitup/?viewAsMember=true"
                 target="_blank"
                 rel="noopener noreferrer" 
-                className="text-muted-foreground hover:text-primary transition-all duration-300 hover-scale group" 
+                className="text-gray-400 hover:text-primary transition-all duration-300 hover-scale group" 
                 aria-label="LinkedIn"
               >
                 <Linkedin className="h-6 w-6 group-hover:neon-flicker group-hover:drop-shadow-[0_0_8px_hsl(var(--primary))]" />
@@ -61,7 +61,7 @@ const Footer = () => {
                 href="https://www.youtube.com/@dizitup-official"
                 target="_blank"
                 rel="noopener noreferrer" 
-                className="text-muted-foreground hover:text-primary transition-all duration-300 hover-scale group" 
+                className="text-gray-400 hover:text-primary transition-all duration-300 hover-scale group" 
                 aria-label="YouTube"
               >
                 <Youtube className="h-6 w-6 group-hover:neon-flicker group-hover:drop-shadow-[0_0_8px_hsl(var(--primary))]" />
@@ -71,30 +71,30 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-display font-semibold text-foreground mb-4">Our Services</h3>
+            <h3 className="font-display font-semibold text-white mb-4">Our Services</h3>
             <ul className="space-y-2">
               <li>
-                <a href="/services" className="text-muted-foreground hover:text-primary transition-colors block">
+                <a href="/services" className="text-gray-400 hover:text-primary transition-colors block">
                   Video Editing Services
                 </a>
               </li>
               <li>
-                <a href="/services" className="text-muted-foreground hover:text-primary transition-colors block">
+                <a href="/services" className="text-gray-400 hover:text-primary transition-colors block">
                   Graphic Design
                 </a>
               </li>
               <li>
-                <a href="/services" className="text-muted-foreground hover:text-primary transition-colors block">
+                <a href="/services" className="text-gray-400 hover:text-primary transition-colors block">
                   Website Development
                 </a>
               </li>
               <li>
-                <a href="/services" className="text-muted-foreground hover:text-primary transition-colors block">
+                <a href="/services" className="text-gray-400 hover:text-primary transition-colors block">
                   Workflow Automation
                 </a>
               </li>
               <li>
-                <a href="/portfolio" className="text-muted-foreground hover:text-primary transition-colors block">
+                <a href="/portfolio" className="text-gray-400 hover:text-primary transition-colors block">
                   View Portfolio
                 </a>
               </li>
@@ -103,15 +103,15 @@ const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h3 className="font-display font-semibold text-foreground mb-4">Contact</h3>
+            <h3 className="font-display font-semibold text-white mb-4">Contact</h3>
             <ul className="space-y-2">
               <li>
-                <a href="/#contact" className="text-muted-foreground hover:text-primary transition-colors block">
+                <a href="/#contact" className="text-gray-400 hover:text-primary transition-colors block">
                   Get a Quote
                 </a>
               </li>
               <li>
-                <a href="mailto:dizitup@outlook.com" className="text-muted-foreground hover:text-primary transition-colors block">dizitup@outlook.com</a>
+                <a href="mailto:dizitup@outlook.com" className="text-gray-400 hover:text-primary transition-colors block">dizitup@outlook.com</a>
               </li>
               <li>
                 
@@ -119,7 +119,7 @@ const Footer = () => {
               <li>
                 <Dialog>
                   <DialogTrigger asChild>
-                    <button className="text-muted-foreground hover:text-primary transition-colors text-left">
+                    <button className="text-gray-400 hover:text-primary transition-colors text-left">
                       Privacy Policy
                     </button>
                   </DialogTrigger>
@@ -195,7 +195,7 @@ const Footer = () => {
               <li>
                 <Dialog>
                   <DialogTrigger asChild>
-                    <button className="text-muted-foreground hover:text-primary transition-colors text-left">
+                    <button className="text-gray-400 hover:text-primary transition-colors text-left">
                       Terms of Service
                     </button>
                   </DialogTrigger>
@@ -289,13 +289,13 @@ const Footer = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-border mt-8 pt-8 text-center">
-          <p className="text-muted-foreground">
+        <div className="border-t border-red-900/30 mt-8 pt-8 text-center">
+          <p className="text-gray-400">
             © {currentYear} Dizitup. All rights reserved. 
             <span className="text-primary font-semibold"> Built with AI-powered automation.</span>
           </p>
           <div className="mt-2">
-            <a href="/admin/login" className="text-xs text-muted-foreground/50 hover:text-primary transition-colors">
+            <a href="/admin/login" className="text-xs text-gray-500 hover:text-primary transition-colors">
               Admin
             </a>
           </div>

@@ -24,20 +24,20 @@ const PricingTeaser = () => {
       behavior: 'smooth'
     });
   };
-  return <section className="py-12 sm:py-16 md:py-20 bg-background">
+  return <section className="py-12 sm:py-16 md:py-20 bg-black">
       <div className="container max-w-6xl mx-auto px-4 sm:px-6">
         
         <div className="text-center mb-8 sm:mb-12">
-          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 text-foreground">
+          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 text-white">
             Affordable <span className="text-primary">Digital Solutions</span> for Every Business
           </h2>
-          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto px-4">
+          <p className="text-base sm:text-lg text-gray-300 max-w-2xl mx-auto px-4">
             Custom pricing tailored to your specific needs. From startup growth to enterprise automation solutions.
           </p>
         </div>
 
         <div className="text-center">
-          <p className="text-sm sm:text-base text-muted-foreground mb-4 px-4">
+          <p className="text-sm sm:text-base text-gray-400 mb-4 px-4">
             Need a custom solution for your digital transformation? Let's discuss your project!
           </p>
           <Button onClick={scrollToBooking} variant="hero" size="lg" className="pulse-red hover-glow text-base sm:text-lg">
