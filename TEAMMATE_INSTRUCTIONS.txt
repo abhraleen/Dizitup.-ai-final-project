@@ -1,0 +1,49 @@
+DIZITUP PROJECT - TEAMMATE SETUP INSTRUCTIONS
+============================================
+
+Hello teammate! Follow these steps to set up the Dizitup project on your machine:
+
+1. PREREQUISITES
+   - Install Node.js (version 14 or higher) from https://nodejs.org/
+   - Install Git from https://git-scm.com/
+   - Download and install Qoder IDE from the official website
+
+2. GETTING THE PROJECT FILES
+   Option A: If you received a ZIP file
+   - Extract the ZIP file to a folder on your computer
+   
+   Option B: If you have access to the Git repository
+   - Open terminal/command prompt
+   - Navigate to where you want to store the project
+   - Run: git clone [repository-url]
+
+3. SETTING UP THE PROJECT
+   - Open Qoder IDE
+   - Select "File" > "Open Folder" and choose the project folder
+   - Open the integrated terminal in Qoder (Ctrl+` or Cmd+`)
+   - Run: npm install
+   - Wait for all dependencies to install
+
+4. RUNNING THE PROJECT
+   - In the terminal, run: npm run dev
+   - Open your browser and go to http://localhost:5173 (or the URL shown in terminal)
+
+5. MAKING CHANGES
+   - Work on files using Qoder IDE
+   - Save your changes regularly
+   - Use Git to track your changes:
+     * git add .
+     * git commit -m "Your commit message"
+     * git push origin main (if using remote repository)
+
+6. SHARING YOUR CHANGES
+   Option A: If using Git
+   - Push your changes to the remote repository
+   - Your teammate can pull the changes with: git pull origin main
+   
+   Option B: If sharing files directly
+   - Compress the entire project folder as ZIP
+   - Send the ZIP file to your teammate
+   - Your teammate should extract it and replace their local files
+
+For any issues, refer to the SETUP_INSTRUCTIONS.md and QODER_GUIDE.md files in the project.
