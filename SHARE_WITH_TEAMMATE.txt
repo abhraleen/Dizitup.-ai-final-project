@@ -1,0 +1,38 @@
+DIZITUP PROJECT - SHARE WITH TEAMMATE
+====================================
+
+YOUR REPOSITORY IS NOW HOSTED ON GITHUB!
+Repository URL: https://github.com/YOUR_USERNAME/dizitup-project
+
+INSTRUCTIONS FOR YOUR TEAMMATE:
+
+1. Install prerequisites:
+   - Git: https://git-scm.com/
+   - Node.js: https://nodejs.org/
+   - Qoder IDE (optional): [Download from Qoder website]
+
+2. Clone the repository:
+   Open terminal/command prompt and run:
+   git clone https://github.com/YOUR_USERNAME/dizitup-project.git
+
+3. Install dependencies:
+   cd dizitup-project
+   npm install
+
+4. Open in Qoder IDE:
+   - Open Qoder IDE
+   - Select "File" > "Open Folder"
+   - Choose the "dizitup-project" folder
+
+5. Start development server:
+   npm run dev
+
+6. To make changes:
+   - Work on files in Qoder IDE
+   - Save your changes
+   - Use these commands to share back:
+     git add .
+     git commit -m "Description of your changes"
+     git push origin main
+
+That's it! Your teammate can now work on the project and share changes back to you through GitHub.
