@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Play, Zap, Cpu, Brain, ArrowRight, BarChart3, Palette, Film, Globe, Smartphone, Target, Code, Wrench, Sparkles, CreditCard, User } from "lucide-react";
+import { Play, Zap, Cpu, Brain, ArrowRight, BarChart3, Palette, Film, Globe, Smartphone, Target, Code, Wrench, Sparkles, CreditCard, User, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { SparkleButton, ProcessingModal } from "@/components/SparkleButton";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
+import BusinessAnalysisSlides from "@/components/BusinessAnalysisSlides";
+import CreditSystem from "@/components/CreditSystem";
 
 const AIDashboard = () => {
   const navigate = useNavigate();
@@ -158,7 +161,7 @@ const AIDashboard = () => {
       <div className="relative z-10 container mx-auto px-4 py-8 sm:py-12">
         {/* Enhanced Header with better navigation */}
         <div 
-          className={`flex justify-between items-center mb-12 sm:mb-20 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'}`}
+          className={`flex justify-between items-center mb-8 sm:mb-12 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-10'}`}
           style={{ transitionDelay: '100ms' }}
         >
           <div className="text-2xl font-bold bg-gradient-to-r from-red-500 to-red-300 bg-clip-text text-transparent tracking-wider">
@@ -197,6 +200,11 @@ const AIDashboard = () => {
               Classic Version
             </Button>
           </div>
+        </div>
+        
+        {/* Credit System */}
+        <div className={`mb-12 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} style={{ transitionDelay: '300ms' }}>
+          <CreditSystem />
         </div>
 
         {/* Enhanced Hero Section with staggered animations */}
@@ -270,10 +278,13 @@ const AIDashboard = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {services.map((service, index) => (
-              <div 
+              <motion.div 
                 key={index}
-                className={`bg-black/40 backdrop-blur-xl border border-red-500/30 rounded-2xl p-8 hover:border-red-500/50 transition-all duration-500 group hover:transform hover:scale-105 nav-card ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-                style={{ transitionDelay: `${1300 + service.delay}ms` }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
+                transition={{ delay: (1300 + service.delay) / 1000, duration: 0.5 }}
+                whileHover={{ y: -10, scale: 1.03 }}
+                className="bg-black/40 backdrop-blur-xl border border-red-500/30 rounded-2xl p-8 hover:border-red-500/50 transition-all duration-500 group nav-card"
               >
                 <div className="bg-red-500/15 p-4 rounded-xl w-16 h-16 flex items-center justify-center mb-6 group-hover:bg-red-500/25 transition-colors nav-icon-bg">
                   <service.icon className="h-8 w-8 text-red-400" />
@@ -287,7 +298,7 @@ const AIDashboard = () => {
                 >
                   Start {service.task}
                 </SparkleButton>
-              </div>
+              </motion.div>
             ))}
           </div>
         </section>
@@ -301,23 +312,27 @@ const AIDashboard = () => {
               { value: "50%", label: "Time Saved" },
               { value: "24/7", label: "AI Availability" }
             ].map((stat, index) => (
-              <div 
+              <motion.div 
                 key={index}
-                className={`text-center p-8 bg-black/40 backdrop-blur-xl border border-red-500/30 rounded-2xl nav-card ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-                style={{ transitionDelay: `${2000 + index * 100}ms` }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
+                transition={{ delay: (2000 + index * 100) / 1000, duration: 0.5 }}
+                className="text-center p-8 bg-black/40 backdrop-blur-xl border border-red-500/30 rounded-2xl nav-card"
               >
                 <div className="text-4xl md:text-5xl font-bold text-red-500 mb-3 animate-count-up">{stat.value}</div>
                 <div className="text-gray-400 text-lg">{stat.label}</div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </section>
 
         {/* Features Section */}
         <section id="features" className="mb-24">
-          <div 
-            className={`text-center mb-20 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-            style={{ transitionDelay: '2500ms' }}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
+            transition={{ delay: 2.5, duration: 0.5 }}
+            className="text-center mb-20"
           >
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-red-500 to-red-300 bg-clip-text text-transparent">
               Advanced AI Capabilities
@@ -325,12 +340,14 @@ const AIDashboard = () => {
             <p className="text-gray-400 text-lg max-w-2xl mx-auto">
               Cutting-edge technology powering our digital solutions
             </p>
-          </div>
+          </motion.div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-            <div 
-              className={`bg-black/40 backdrop-blur-xl border border-red-500/30 rounded-2xl p-10 nav-card ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-              style={{ transitionDelay: '2700ms' }}
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: isVisible ? 1 : 0, x: isVisible ? 0 : -20 }}
+              transition={{ delay: 2.7, duration: 0.5 }}
+              className="bg-black/40 backdrop-blur-xl border border-red-500/30 rounded-2xl p-10 nav-card"
             >
               <div className="flex items-start mb-8">
                 <Brain className="h-10 w-10 text-red-500 mr-6 flex-shrink-0 nav-icon" />
@@ -350,11 +367,13 @@ const AIDashboard = () => {
                   </p>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
-            <div 
-              className={`bg-black/40 backdrop-blur-xl border border-red-500/30 rounded-2xl p-10 nav-card ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-              style={{ transitionDelay: '2900ms' }}
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: isVisible ? 1 : 0, x: isVisible ? 0 : 20 }}
+              transition={{ delay: 2.9, duration: 0.5 }}
+              className="bg-black/40 backdrop-blur-xl border border-red-500/30 rounded-2xl p-10 nav-card"
             >
               <div className="space-y-8">
                 <div>
@@ -376,10 +395,33 @@ const AIDashboard = () => {
                   </p>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </section>
 
+        {/* Business Analysis Slides */}
+        <section className="mb-24">
+          <div 
+            className={`text-center mb-12 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+            style={{ transitionDelay: '3100ms' }}
+          >
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-red-500 to-red-300 bg-clip-text text-transparent">
+              AI Business Insights
+            </h2>
+            <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
+              Interactive 3D visualization of your business analysis and recommendations
+            </p>
+            <div className="flex justify-center">
+              <div className="inline-flex items-center px-4 py-2 bg-red-500/10 border border-red-500/30 rounded-full">
+                <Brain className="h-5 w-5 text-red-400 mr-2" />
+                <span className="text-red-300 text-sm">Powered by Advanced AI Algorithms</span>
+              </div>
+            </div>
+          </div>
+          
+          <BusinessAnalysisSlides />
+        </section>
+        
         {/* CTA Section */}
         <section className="text-center py-20 mb-16">
           <div 

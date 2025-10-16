@@ -9,6 +9,7 @@ interface Message {
   text: string;
   sender: "user" | "bot";
   timestamp: Date;
+  actions?: Array<{ label: string; value: string }>;
 }
 
 const DiziChatbot = () => {
@@ -25,9 +26,20 @@ const DiziChatbot = () => {
       trackUserAction("open_chatbot");
     };
 
+    const handleOpenAIOnboarding = () => {
+      setIsOpen(false);
+      // Dispatch event to open AI onboarding
+      setTimeout(() => {
+        const event = new CustomEvent('openAIOnboarding');
+        window.dispatchEvent(event);
+      }, 300);
+    };
+
     window.addEventListener('openChatbot', handleOpenChatbot);
+    window.addEventListener('openAIOnboardingFromChat', handleOpenAIOnboarding);
     return () => {
       window.removeEventListener('openChatbot', handleOpenChatbot);
+      window.removeEventListener('openAIOnboardingFromChat', handleOpenAIOnboarding);
     };
   }, []);
 
@@ -41,6 +53,11 @@ const DiziChatbot = () => {
             text: "Hey there 👋, I'm Dizi — your AI business partner. What are we scaling today?",
             sender: "bot",
             timestamp: new Date(),
+            actions: [
+              { label: "Explore Services", value: "services" },
+              { label: "View Pricing", value: "pricing" },
+              { label: "Start AI Analysis", value: "analysis" }
+            ]
           },
         ]);
         trackUserAction("chatbot_greeting_displayed");
@@ -78,26 +95,69 @@ const DiziChatbot = () => {
 
   const generateBotResponse = (userInput: string) => {
     let response = "";
+    let actions: Array<{ label: string; value: string }> = [];
 
     // Simple response logic based on keywords
     if (userInput.toLowerCase().includes("hello") || userInput.toLowerCase().includes("hi")) {
       response = "Hello there! I'm Dizi, your AI business partner. How can I help you scale your business today?";
+      actions = [
+        { label: "Explore Services", value: "services" },
+        { label: "View Pricing", value: "pricing" },
+        { label: "Start AI Analysis", value: "analysis" }
+      ];
     } else if (userInput.toLowerCase().includes("service") || userInput.toLowerCase().includes("offer")) {
       response = "We offer AI-powered digital marketing, workflow automation, website development, video editing, and creative design services. Which one interests you the most?";
+      actions = [
+        { label: "Digital Marketing", value: "marketing" },
+        { label: "Workflow Automation", value: "automation" },
+        { label: "Website Development", value: "website" }
+      ];
     } else if (userInput.toLowerCase().includes("price") || userInput.toLowerCase().includes("cost")) {
       response = "We have flexible pricing plans based on credits. Would you like to hear about our Free Trial, Starter, or Enterprise plans?";
+      actions = [
+        { label: "Free Trial", value: "free" },
+        { label: "Starter Plan", value: "starter" },
+        { label: "Enterprise Plan", value: "enterprise" }
+      ];
     } else if (userInput.toLowerCase().includes("free") || userInput.toLowerCase().includes("trial")) {
       response = "Our Free Trial gives you 100 credits to use our AI tools for 3 days. It's a great way to experience our services!";
+      actions = [
+        { label: "Start Free Trial", value: "start_trial" },
+        { label: "View All Plans", value: "pricing" }
+      ];
     } else if (userInput.toLowerCase().includes("starter")) {
       response = "Our Starter Plan is ₹2,999/month (or $49) and includes 1,000 credits per month with priority AI support. Would you like to know more?";
+      actions = [
+        { label: "Select Starter", value: "select_starter" },
+        { label: "Compare Plans", value: "compare" }
+      ];
     } else if (userInput.toLowerCase().includes("enterprise")) {
       response = "Our Enterprise Plan is ₹9,999/month (or $199) and includes 5,000 credits per month, a dedicated project manager, and premium delivery speed. Perfect for larger businesses!";
+      actions = [
+        { label: "Select Enterprise", value: "select_enterprise" },
+        { label: "Contact Sales", value: "contact_sales" }
+      ];
     } else if (userInput.toLowerCase().includes("credit")) {
       response = "Credits are used to access our AI tools and services. Each action consumes a certain number of credits. Want to know how many credits each service uses?";
+      actions = [
+        { label: "Credit Usage", value: "credit_usage" },
+        { label: "Add Credits", value: "add_credits" }
+      ];
     } else if (userInput.toLowerCase().includes("thank")) {
       response = "You're welcome! Is there anything else I can help you with?";
+      actions = [
+        { label: "Yes, I need help", value: "help" },
+        { label: "No, thanks", value: "no_thanks" }
+      ];
     } else if (userInput.toLowerCase().includes("bye") || userInput.toLowerCase().includes("goodbye")) {
       response = "Goodbye! Feel free to chat with me anytime if you have more questions. Have a great day!";
+    } else if (userInput.toLowerCase().includes("analysis")) {
+      response = "Great! Let's start your AI business analysis. I'll ask you a few questions to understand your needs better.";
+      // In a real app, this would trigger the AI onboarding flow
+      setTimeout(() => {
+        const event = new CustomEvent('openAIOnboarding');
+        window.dispatchEvent(event);
+      }, 1500);
     } else {
       // Default responses
       const defaultResponses = [
@@ -109,6 +169,11 @@ const DiziChatbot = () => {
         "That's a common goal for many businesses. Our Enterprise plan might be perfect for you. Shall I tell you more about it?",
       ];
       response = defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+      actions = [
+        { label: "Tell me more", value: "more_info" },
+        { label: "Let's get started", value: "get_started" },
+        { label: "Show me examples", value: "examples" }
+      ];
     }
 
     const botMessage: Message = {
@@ -116,6 +181,7 @@ const DiziChatbot = () => {
       text: response,
       sender: "bot",
       timestamp: new Date(),
+      actions
     };
 
     setMessages((prev) => [...prev, botMessage]);
@@ -209,7 +275,25 @@ const DiziChatbot = () => {
                         {message.sender === "user" && (
                           <User className="h-5 w-5 text-red-200 flex-shrink-0 mt-0.5" />
                         )}
-                        <p className="text-sm">{message.text}</p>
+                        <div>
+                        <p className="text-sm mb-2">{message.text}</p>
+                        {message.actions && message.actions.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {message.actions.map((action, index) => (
+                              <button
+                                key={index}
+                                onClick={() => {
+                                  setInputValue(action.label);
+                                  setTimeout(handleSend, 100);
+                                }}
+                                className="text-xs bg-red-500/20 hover:bg-red-500/30 text-red-300 px-2 py-1 rounded-full transition-colors"
+                              >
+                                {action.label}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                       </div>
                     </div>
                   </motion.div>

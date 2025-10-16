@@ -1,531 +1,451 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
-import AnimatedWaveBackground from "@/components/AnimatedWaveBackground";
-import PortfolioManager from "@/components/admin/PortfolioManager";
 import { 
-  LogOut, 
-  Mail, 
-  Phone, 
-  User, 
-  Calendar, 
-  MessageSquare, 
-  CheckCircle, 
-  XCircle, 
-  Clock,
-  Filter,
-  Trash2,
-  MessageCircle,
-  ToggleLeft,
-  ToggleRight,
-  Image as ImageIcon,
-  Briefcase
+  Users, 
+  CreditCard, 
+  BarChart3, 
+  Settings, 
+  Search, 
+  Filter, 
+  Plus, 
+  Edit, 
+  Trash2, 
+  Eye,
+  Zap,
+  TrendingUp,
+  Calendar,
+  DollarSign
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-interface ServiceRequest {
+interface User {
   id: string;
-  enquiry_number: string;
   name: string;
   email: string;
-  whatsapp: string;
-  service: string;
-  message: string | null;
-  status: 'pending' | 'reviewed' | 'contacted' | 'approved' | 'disapproved';
-  created_at: string;
-  updated_at: string;
+  plan: string;
+  credits: number;
+  status: 'active' | 'inactive' | 'suspended';
+  joinDate: string;
+  lastActive: string;
+}
+
+interface Plan {
+  id: string;
+  name: string;
+  price: number;
+  credits: number;
+  users: number;
+  status: 'active' | 'inactive';
 }
 
 const AdminDashboard = () => {
-  const [requests, setRequests] = useState<ServiceRequest[]>([]);
-  const [filteredRequests, setFilteredRequests] = useState<ServiceRequest[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<'all' | 'pending' | 'reviewed' | 'contacted'>('all');
-  const [updatingId, setUpdatingId] = useState<string | null>(null);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
-
-  const { user, isAdmin, signOut } = useAuth();
-  const { toast } = useToast();
-  const navigate = useNavigate();
-
-  // Redirect if not admin
-  useEffect(() => {
-    if (!loading && (!user || !isAdmin)) {
-      navigate("/admin/login");
+  const [activeTab, setActiveTab] = useState('users');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [users, setUsers] = useState<User[]>([
+    {
+      id: '1',
+      name: 'Alex Johnson',
+      email: 'alex@example.com',
+      plan: 'Enterprise',
+      credits: 4250,
+      status: 'active',
+      joinDate: '2025-09-15',
+      lastActive: '2025-10-15'
+    },
+    {
+      id: '2',
+      name: 'Sarah Williams',
+      email: 'sarah@example.com',
+      plan: 'Professional',
+      credits: 1800,
+      status: 'active',
+      joinDate: '2025-09-22',
+      lastActive: '2025-10-14'
+    },
+    {
+      id: '3',
+      name: 'Michael Chen',
+      email: 'michael@example.com',
+      plan: 'Starter',
+      credits: 350,
+      status: 'active',
+      joinDate: '2025-10-01',
+      lastActive: '2025-10-15'
+    },
+    {
+      id: '4',
+      name: 'Emma Davis',
+      email: 'emma@example.com',
+      plan: 'Enterprise',
+      credits: 0,
+      status: 'suspended',
+      joinDate: '2025-08-30',
+      lastActive: '2025-10-10'
     }
-  }, [user, isAdmin, loading, navigate]);
+  ]);
 
-  // Fetch service requests
-  const fetchRequests = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('service_requests')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      
-      setRequests(data || []);
-    } catch (error) {
-      console.error('Error fetching requests:', error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch service requests.",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
+  const [plans, setPlans] = useState<Plan[]>([
+    {
+      id: 'starter',
+      name: 'Starter',
+      price: 2999,
+      credits: 1000,
+      users: 12,
+      status: 'active'
+    },
+    {
+      id: 'professional',
+      name: 'Professional',
+      price: 4999,
+      credits: 2500,
+      users: 8,
+      status: 'active'
+    },
+    {
+      id: 'enterprise',
+      name: 'Enterprise',
+      price: 9999,
+      credits: 5000,
+      users: 5,
+      status: 'active'
     }
-  };
+  ]);
 
-  useEffect(() => {
-    if (user && isAdmin) {
-      fetchRequests();
-    }
-  }, [user, isAdmin]);
+  const [stats, setStats] = useState({
+    totalUsers: 1242,
+    activeUsers: 987,
+    revenue: 245680,
+    creditsUsed: 124500
+  });
 
-  // Filter requests
-  useEffect(() => {
-    if (filter === 'all') {
-      setFilteredRequests(requests);
-    } else {
-      setFilteredRequests(requests.filter(req => req.status === filter));
-    }
-  }, [requests, filter]);
-
-  const updateRequestStatus = async (id: string, status: 'reviewed' | 'contacted') => {
-    setUpdatingId(id);
-    
-    try {
-      const { error } = await supabase
-        .from('service_requests')
-        .update({ 
-          status,
-          processed_by: user?.id,
-          processed_at: new Date().toISOString()
-        })
-        .eq('id', id);
-
-      if (error) throw error;
-
-      // Update local state
-      setRequests(prev => 
-        prev.map(req => 
-          req.id === id 
-            ? { ...req, status }
-            : req
-        )
-      );
-
-      toast({
-        title: "Success",
-        description: `Request ${status} successfully.`,
-      });
-    } catch (error) {
-      console.error('Error updating request:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update request status.",
-        variant: "destructive",
-      });
-    } finally {
-      setUpdatingId(null);
-    }
-  };
-
-  const deleteRequest = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this booking? This action cannot be undone.')) {
-      return;
-    }
-
-    setDeletingId(id);
-    
-    try {
-      console.log('Attempting to delete request with ID:', id);
-      
-      const { error, data } = await supabase
-        .from('service_requests')
-        .delete()
-        .eq('id', id)
-        .select(); // Add select() to see what was deleted
-
-      console.log('Delete response:', { error, data });
-
-      if (error) {
-        console.error('Supabase delete error:', error);
-        throw error;
-      }
-
-      // Update local state only if delete was successful
-      setRequests(prev => prev.filter(req => req.id !== id));
-
-      toast({
-        title: "Success",
-        description: "Booking deleted successfully.",
-      });
-      
-      console.log('Request deleted successfully');
-    } catch (error) {
-      console.error('Error deleting request:', error);
-      toast({
-        title: "Error",
-        description: `Failed to delete booking: ${error.message || 'Unknown error'}`,
-        variant: "destructive",
-      });
-    } finally {
-      setDeletingId(null);
-    }
-  };
-
-  const toggleRequestStatus = async (id: string, currentStatus: string) => {
-    const newStatus = currentStatus === 'reviewed' ? 'contacted' : 'reviewed';
-    await updateRequestStatus(id, newStatus as 'reviewed' | 'contacted');
-  };
-
-  const openWhatsApp = (request: ServiceRequest) => {
-    try {
-      const message = `Hello ${request.name},
-
-Thank you for your enquiry with DizItUp (ID: ${request.enquiry_number}).
-Service Requested: ${request.service}
-Message from you: "${request.message || 'No message provided'}"
-
-We'll review your request and get back to you shortly.
-
-– Team DizItUp`;
-      
-      // Clean phone number (remove all non-numeric characters)
-      const cleanPhone = request.whatsapp.replace(/[^0-9]/g, '');
-      console.log('Opening WhatsApp for phone:', cleanPhone);
-      
-      const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
-      console.log('WhatsApp URL:', whatsappUrl);
-      
-      // Create a temporary link element and click it to avoid browser blocking
-      const link = document.createElement('a');
-      link.href = whatsappUrl;
-      link.target = '_blank';
-      link.rel = 'noopener noreferrer';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-    } catch (error) {
-      console.error('Error opening WhatsApp:', error);
-      toast({
-        title: "Error",
-        description: "Failed to open WhatsApp. Please check the phone number format.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const openEmail = (request: ServiceRequest) => {
-    const subject = `Regarding your enquiry with DizItUp (ID: ${request.enquiry_number})`;
-    const body = `Hi ${request.name},
-
-Thank you for reaching out to DizItUp.
-Service Requested: ${request.service}
-Message from you: "${request.message || 'No message provided'}"
-
-We have received your enquiry and will respond shortly.
-
-Best regards,
-Team DizItUp`;
-    const mailtoUrl = `mailto:${request.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.open(mailtoUrl);
-  };
-
-  const handleSignOut = async () => {
-    await signOut();
-    navigate("/admin/login");
-  };
-
-  const getStatusBadge = (status: string) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
-      case 'reviewed':
-        return <Badge className="bg-blue-600 hover:bg-blue-700">Reviewed</Badge>;
-      case 'contacted':
-        return <Badge className="bg-green-600 hover:bg-green-700">Contacted</Badge>;
-      case 'approved':
-        return <Badge className="bg-green-600 hover:bg-green-700">Approved</Badge>;
-      case 'disapproved':
-        return <Badge variant="destructive">Disapproved</Badge>;
-      default:
-        return <Badge variant="secondary">Pending</Badge>;
+      case 'active': return 'bg-green-500/20 text-green-400';
+      case 'inactive': return 'bg-gray-500/20 text-gray-400';
+      case 'suspended': return 'bg-red-500/20 text-red-400';
+      default: return 'bg-gray-500/20 text-gray-400';
     }
   };
 
-  const getStatusCounts = () => {
-    const all = requests.length;
-    const pending = requests.filter(r => r.status === 'pending').length;
-    const reviewed = requests.filter(r => r.status === 'reviewed').length;
-    const contacted = requests.filter(r => r.status === 'contacted').length;
-    
-    return { all, pending, reviewed, contacted };
+  const getPlanColor = (plan: string) => {
+    switch (plan) {
+      case 'Starter': return 'bg-blue-500/20 text-blue-400';
+      case 'Professional': return 'bg-purple-500/20 text-purple-400';
+      case 'Enterprise': return 'bg-red-500/20 text-red-400';
+      default: return 'bg-gray-500/20 text-gray-400';
+    }
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center content-overlay-strong p-8 rounded-lg">
-          <div className="glitch text-2xl font-display mb-4">Loading Admin Panel...</div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!user || !isAdmin) {
-    return null;
-  }
-
-  const counts = getStatusCounts();
 
   return (
-    <div className="min-h-screen text-foreground relative">
-      <AnimatedWaveBackground />
-      {/* Header */}
-      <div className="content-overlay-light border-b border-border">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <h1 className="font-display text-2xl font-bold text-card-foreground">
+    <div className="min-h-screen bg-black text-white p-6">
+      {/* Background effects */}
+      <div className="fixed inset-0 -z-10 overflow-hidden">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-red-500/5 rounded-full blur-3xl animate-pulse-slow"></div>
+        <div className="absolute bottom-1/3 right-1/3 w-80 h-80 bg-red-500/10 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '1s' }}></div>
+      </div>
+
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-red-500 to-red-300 bg-clip-text text-transparent">
               Admin Dashboard
             </h1>
-            <Button variant="outline" onClick={handleSignOut}>
-              <LogOut className="h-4 w-4 mr-2" />
-              Sign Out
-            </Button>
+            <p className="text-gray-400 mt-2">Manage users, credits, and plans</p>
           </div>
+          <Button className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800">
+            <Plus className="w-5 h-5 mr-2" />
+            Add New
+          </Button>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="bg-black/40 backdrop-blur-xl border border-red-500/30 rounded-2xl p-6">
+            <div className="flex items-center">
+              <div className="p-3 bg-red-500/10 rounded-xl mr-4">
+                <Users className="w-6 h-6 text-red-400" />
+              </div>
+              <div>
+                <p className="text-gray-400 text-sm">Total Users</p>
+                <p className="text-2xl font-bold text-white">{stats.totalUsers.toLocaleString()}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-black/40 backdrop-blur-xl border border-red-500/30 rounded-2xl p-6">
+            <div className="flex items-center">
+              <div className="p-3 bg-green-500/10 rounded-xl mr-4">
+                <TrendingUp className="w-6 h-6 text-green-400" />
+              </div>
+              <div>
+                <p className="text-gray-400 text-sm">Active Users</p>
+                <p className="text-2xl font-bold text-white">{stats.activeUsers.toLocaleString()}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-black/40 backdrop-blur-xl border border-red-500/30 rounded-2xl p-6">
+            <div className="flex items-center">
+              <div className="p-3 bg-blue-500/10 rounded-xl mr-4">
+                <DollarSign className="w-6 h-6 text-blue-400" />
+              </div>
+              <div>
+                <p className="text-gray-400 text-sm">Revenue</p>
+                <p className="text-2xl font-bold text-white">₹{stats.revenue.toLocaleString()}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-black/40 backdrop-blur-xl border border-red-500/30 rounded-2xl p-6">
+            <div className="flex items-center">
+              <div className="p-3 bg-purple-500/10 rounded-xl mr-4">
+                <Zap className="w-6 h-6 text-purple-400" />
+              </div>
+              <div>
+                <p className="text-gray-400 text-sm">Credits Used</p>
+                <p className="text-2xl font-bold text-white">{stats.creditsUsed.toLocaleString()}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation Tabs */}
+        <div className="flex border-b border-red-500/30 mb-8">
+          <button
+            onClick={() => setActiveTab('users')}
+            className={`px-6 py-3 font-medium relative ${
+              activeTab === 'users'
+                ? 'text-red-400'
+                : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            Users
+            {activeTab === 'users' && (
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-500"></div>
+            )}
+          </button>
+          <button
+            onClick={() => setActiveTab('plans')}
+            className={`px-6 py-3 font-medium relative ${
+              activeTab === 'plans'
+                ? 'text-red-400'
+                : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            Plans
+            {activeTab === 'plans' && (
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-500"></div>
+            )}
+          </button>
+          <button
+            onClick={() => setActiveTab('analytics')}
+            className={`px-6 py-3 font-medium relative ${
+              activeTab === 'analytics'
+                ? 'text-red-400'
+                : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            Analytics
+            {activeTab === 'analytics' && (
+              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-red-500"></div>
+            )}
+          </button>
+        </div>
+
+        {/* Tab Content */}
+        <div className="bg-black/40 backdrop-blur-xl border border-red-500/30 rounded-2xl p-6">
+          {/* Users Tab */}
+          {activeTab === 'users' && (
+            <div>
+              <div className="flex flex-col md:flex-row justify-between mb-6 gap-4">
+                <div className="relative flex-1 max-w-md">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
+                  <input
+                    type="text"
+                    placeholder="Search users..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 bg-black/50 border border-red-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500/50"
+                  />
+                </div>
+                <div className="flex gap-3">
+                  <Button variant="outline" className="border-red-500/30 text-red-400 hover:bg-red-500/10">
+                    <Filter className="w-5 h-5 mr-2" />
+                    Filter
+                  </Button>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="text-left text-gray-400 border-b border-red-500/30">
+                      <th className="pb-4">User</th>
+                      <th className="pb-4">Plan</th>
+                      <th className="pb-4">Credits</th>
+                      <th className="pb-4">Status</th>
+                      <th className="pb-4">Last Active</th>
+                      <th className="pb-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {users.map((user) => (
+                      <tr key={user.id} className="border-b border-red-500/20 hover:bg-red-500/5">
+                        <td className="py-4">
+                          <div>
+                            <p className="font-medium text-white">{user.name}</p>
+                            <p className="text-gray-400 text-sm">{user.email}</p>
+                          </div>
+                        </td>
+                        <td className="py-4">
+                          <span className={`px-3 py-1 rounded-full text-sm ${getPlanColor(user.plan)}`}>
+                            {user.plan}
+                          </span>
+                        </td>
+                        <td className="py-4">
+                          <div className="flex items-center">
+                            <Zap className="w-4 h-4 text-red-400 mr-2" />
+                            <span className="text-white">{user.credits.toLocaleString()}</span>
+                          </div>
+                        </td>
+                        <td className="py-4">
+                          <span className={`px-3 py-1 rounded-full text-sm ${getStatusColor(user.status)}`}>
+                            {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
+                          </span>
+                        </td>
+                        <td className="py-4 text-gray-400">
+                          <div className="flex items-center">
+                            <Calendar className="w-4 h-4 mr-2" />
+                            {user.lastActive}
+                          </div>
+                        </td>
+                        <td className="py-4 text-right">
+                          <div className="flex justify-end space-x-2">
+                            <Button size="sm" variant="outline" className="border-red-500/30 text-red-400 hover:bg-red-500/10">
+                              <Eye className="w-4 h-4" />
+                            </Button>
+                            <Button size="sm" variant="outline" className="border-red-500/30 text-red-400 hover:bg-red-500/10">
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            <Button size="sm" variant="outline" className="border-red-500/30 text-red-400 hover:bg-red-500/10">
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* Plans Tab */}
+          {activeTab === 'plans' && (
+            <div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {plans.map((plan) => (
+                  <div key={plan.id} className="bg-gradient-to-b from-red-900/20 to-red-800/20 border border-red-500/30 rounded-2xl p-6">
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <h3 className="text-xl font-bold text-white">{plan.name}</h3>
+                        <p className="text-3xl font-bold text-red-400 mt-2">₹{plan.price}<span className="text-lg text-gray-400">/month</span></p>
+                      </div>
+                      <span className={`px-3 py-1 rounded-full text-sm ${plan.status === 'active' ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'}`}>
+                        {plan.status}
+                      </span>
+                    </div>
+                    
+                    <div className="mb-6">
+                      <div className="flex items-center text-gray-300 mb-2">
+                        <Zap className="w-5 h-5 mr-2 text-red-400" />
+                        <span>{plan.credits.toLocaleString()} credits</span>
+                      </div>
+                      <div className="flex items-center text-gray-300">
+                        <Users className="w-5 h-5 mr-2 text-red-400" />
+                        <span>{plan.users} active users</span>
+                      </div>
+                    </div>
+                    
+                    <div className="flex space-x-3">
+                      <Button className="flex-1 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800">
+                        <Edit className="w-4 h-4 mr-2" />
+                        Edit
+                      </Button>
+                      <Button variant="outline" className="border-red-500/30 text-red-400 hover:bg-red-500/10">
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              <div className="mt-8">
+                <Button className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800">
+                  <Plus className="w-5 h-5 mr-2" />
+                  Add New Plan
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Analytics Tab */}
+          {activeTab === 'analytics' && (
+            <div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div className="bg-black/50 border border-red-500/30 rounded-2xl p-6">
+                  <h3 className="text-xl font-bold text-white mb-4">Revenue Overview</h3>
+                  <div className="h-64 flex items-center justify-center">
+                    <p className="text-gray-400">Revenue chart visualization</p>
+                  </div>
+                </div>
+                
+                <div className="bg-black/50 border border-red-500/30 rounded-2xl p-6">
+                  <h3 className="text-xl font-bold text-white mb-4">User Growth</h3>
+                  <div className="h-64 flex items-center justify-center">
+                    <p className="text-gray-400">User growth chart visualization</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-black/50 border border-red-500/30 rounded-2xl p-6">
+                <h3 className="text-xl font-bold text-white mb-4">Recent Activity</h3>
+                <div className="space-y-4">
+                  {[
+                    { user: 'Alex Johnson', action: 'Upgraded to Enterprise plan', time: '2 hours ago' },
+                    { user: 'Sarah Williams', action: 'Purchased 1000 additional credits', time: '5 hours ago' },
+                    { user: 'Michael Chen', action: 'Completed video editing project', time: '1 day ago' },
+                    { user: 'Emma Davis', action: 'Account suspended due to low credits', time: '2 days ago' }
+                  ].map((activity, index) => (
+                    <div key={index} className="flex items-center p-4 bg-black/30 rounded-lg">
+                      <div className="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center mr-4">
+                        <Users className="w-5 h-5 text-red-400" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-white font-medium">{activity.user}</p>
+                        <p className="text-gray-400 text-sm">{activity.action}</p>
+                      </div>
+                      <p className="text-gray-500 text-sm">{activity.time}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="container mx-auto px-6 py-8">
-        <Tabs defaultValue="service-requests" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-2">
-            <TabsTrigger value="service-requests" className="flex items-center gap-2">
-              <MessageSquare className="h-4 w-4" />
-              Service Requests
-            </TabsTrigger>
-            <TabsTrigger value="portfolio" className="flex items-center gap-2">
-              <Briefcase className="h-4 w-4" />
-              Portfolio Manager
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="service-requests" className="space-y-6">
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <Card className="bg-card border-border hover-glow">
-                <CardContent className="p-6">
-                  <div className="flex items-center">
-                    <MessageSquare className="h-8 w-8 text-primary" />
-                    <div className="ml-4">
-                      <p className="text-sm font-medium text-muted-foreground">Total Requests</p>
-                      <p className="text-2xl font-bold text-card-foreground">{counts.all}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-card border-border hover-glow">
-                <CardContent className="p-6">
-                  <div className="flex items-center">
-                    <Clock className="h-8 w-8 text-yellow-500" />
-                    <div className="ml-4">
-                      <p className="text-sm font-medium text-muted-foreground">Pending</p>
-                      <p className="text-2xl font-bold text-card-foreground">{counts.pending}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-card border-border hover-glow">
-                <CardContent className="p-6">
-                  <div className="flex items-center">
-                    <CheckCircle className="h-8 w-8 text-blue-500" />
-                    <div className="ml-4">
-                      <p className="text-sm font-medium text-muted-foreground">Reviewed</p>
-                      <p className="text-2xl font-bold text-card-foreground">{counts.reviewed}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-card border-border hover-glow">
-                <CardContent className="p-6">
-                  <div className="flex items-center">
-                    <XCircle className="h-8 w-8 text-green-500" />
-                    <div className="ml-4">
-                      <p className="text-sm font-medium text-muted-foreground">Contacted</p>
-                      <p className="text-2xl font-bold text-card-foreground">{counts.contacted}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Filters */}
-            <Card className="bg-card border-border">
-              <CardHeader>
-                <CardTitle className="flex items-center text-card-foreground">
-                  <Filter className="h-5 w-5 mr-2" />
-                  Filter Requests
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2">
-                  {['all', 'pending', 'reviewed', 'contacted'].map((filterOption) => (
-                    <Button
-                      key={filterOption}
-                      variant={filter === filterOption ? "default" : "outline"}
-                      onClick={() => setFilter(filterOption as any)}
-                      className="capitalize"
-                    >
-                      {filterOption} 
-                      {filterOption === 'all' && ` (${counts.all})`}
-                      {filterOption === 'pending' && ` (${counts.pending})`}
-                      {filterOption === 'reviewed' && ` (${counts.reviewed})`}
-                      {filterOption === 'contacted' && ` (${counts.contacted})`}
-                    </Button>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Requests List */}
-            <div className="space-y-6">
-              {filteredRequests.length === 0 ? (
-                <Card className="bg-card border-border">
-                  <CardContent className="p-12 text-center">
-                    <MessageSquare className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground">
-                      {filter === 'all' ? 'No service requests found.' : `No ${filter} requests found.`}
-                    </p>
-                  </CardContent>
-                </Card>
-              ) : (
-                filteredRequests.map((request) => (
-                  <Card key={request.id} className="bg-card border-border hover-glow">
-                    <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <CardTitle className="text-lg text-card-foreground">
-                          {request.enquiry_number}
-                        </CardTitle>
-                        <div className="flex items-center gap-2">
-                          {getStatusBadge(request.status)}
-                          <span className="text-sm text-muted-foreground">
-                            {new Date(request.created_at).toLocaleDateString()}
-                          </span>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="flex items-center gap-2">
-                          <User className="h-4 w-4 text-primary" />
-                          <span className="text-card-foreground font-medium">{request.name}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Mail className="h-4 w-4 text-primary" />
-                          <span className="text-card-foreground">{request.email}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Phone className="h-4 w-4 text-primary" />
-                          <span className="text-card-foreground">{request.whatsapp}</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Calendar className="h-4 w-4 text-primary" />
-                          <span className="text-card-foreground">{request.service}</span>
-                        </div>
-                      </div>
-                      
-                      {request.message && (
-                        <div className="bg-secondary/50 p-4 rounded-lg">
-                          <p className="text-sm text-card-foreground">
-                            <strong>Message:</strong> {request.message}
-                          </p>
-                        </div>
-                      )}
-
-                      <div className="flex flex-wrap gap-2 pt-4">
-                        {/* Quick Contact Buttons */}
-                        <Button
-                          onClick={() => openEmail(request)}
-                          variant="outline"
-                          className="border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white"
-                        >
-                          <Mail className="h-4 w-4 mr-2" />
-                          Email User
-                        </Button>
-
-                        {/* Status Toggle - Only for reviewed/contacted status */}
-                        {(request.status === 'reviewed' || request.status === 'contacted') && (
-                          <Button
-                            onClick={() => toggleRequestStatus(request.id, request.status)}
-                            disabled={updatingId === request.id}
-                            variant="outline"
-                            className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-                          >
-                            {request.status === 'reviewed' ? (
-                              <ToggleRight className="h-4 w-4 mr-2" />
-                            ) : (
-                              <ToggleLeft className="h-4 w-4 mr-2" />
-                            )}
-                            {updatingId === request.id ? 'Updating...' : 
-                             request.status === 'reviewed' ? 'Switch to Contacted' : 'Switch to Reviewed'}
-                          </Button>
-                        )}
-
-                        {/* Status Update Buttons - Only for pending */}
-                        {request.status === 'pending' && (
-                          <>
-                            <Button
-                              onClick={() => updateRequestStatus(request.id, 'reviewed')}
-                              disabled={updatingId === request.id}
-                              className="bg-blue-600 hover:bg-blue-700 text-white"
-                            >
-                              <CheckCircle className="h-4 w-4 mr-2" />
-                              {updatingId === request.id ? 'Processing...' : 'Mark as Reviewed'}
-                            </Button>
-                            <Button
-                              onClick={() => updateRequestStatus(request.id, 'contacted')}
-                              disabled={updatingId === request.id}
-                              className="bg-green-600 hover:bg-green-700 text-white"
-                            >
-                              <XCircle className="h-4 w-4 mr-2" />
-                              {updatingId === request.id ? 'Processing...' : 'Mark as Contacted'}
-                            </Button>
-                          </>
-                        )}
-
-                        {/* Delete Button */}
-                        <Button
-                          onClick={() => deleteRequest(request.id)}
-                          disabled={deletingId === request.id}
-                          variant="outline"
-                          className="border-destructive/30 text-destructive hover:bg-destructive/10"
-                        >
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          {deletingId === request.id ? 'Deleting...' : 'Delete'}
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))
-              )}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="portfolio">
-            <PortfolioManager />
-          </TabsContent>
-        </Tabs>
-      </div>
+      {/* Custom Styles */}
+      <style>{`
+        @keyframes pulse-slow {
+          0% { opacity: 0.05; transform: scale(1); }
+          50% { opacity: 0.1; transform: scale(1.1); }
+          100% { opacity: 0.05; transform: scale(1); }
+        }
+        .animate-pulse-slow {
+          animation: pulse-slow 6s ease-in-out infinite;
+        }
+      `}</style>
     </div>
   );
 };

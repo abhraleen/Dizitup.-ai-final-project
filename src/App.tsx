@@ -9,6 +9,8 @@ import { lazy, Suspense, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { analytics, trackPageView } from "@/utils/analytics";
 const CustomCursor = lazy(() => import("@/components/CustomCursor"));
+const FluidDynamicBackground = lazy(() => import("@/components/FluidDynamicBackground"));
+import PageTransition from "@/components/PageTransition";
 import Index from "./pages/Index";
 import Services from "./pages/Services";
 import Portfolio from "./pages/Portfolio";
@@ -92,25 +94,26 @@ const App = () => (
           <Sonner />
           <Suspense fallback={null}>
             <CustomCursor />
+            <FluidDynamicBackground />
           </Suspense>
           <DiziChatbot />
           <BrowserRouter>
             <PageViewTracker />
             <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/ai" element={<AIDashboard />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/services" element={<Services />} />
-              <Route path="/portfolio" element={<Portfolio />} />
-              <Route path="/pricing" element={<PricingPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/dashboard" element={<UserDashboard />} />
-              <Route path="/admin" element={<AdminDashboard />} />
-              <Route path="/admin/login" element={<AdminLogin />} />
-              <Route path="/admin/dashboard" element={<AdminDashboard />} />
-              <Route path="/video-editing" element={<VideoEditingInterface />} />
+              <Route path="/" element={<PageTransition key="index"><Index /></PageTransition>} />
+              <Route path="/ai" element={<PageTransition key="ai-dashboard"><AIDashboard /></PageTransition>} />
+              <Route path="/settings" element={<PageTransition key="settings"><Settings /></PageTransition>} />
+              <Route path="/services" element={<PageTransition key="services"><Services /></PageTransition>} />
+              <Route path="/portfolio" element={<PageTransition key="portfolio"><Portfolio /></PageTransition>} />
+              <Route path="/pricing" element={<PageTransition key="pricing"><PricingPage /></PageTransition>} />
+              <Route path="/profile" element={<PageTransition key="profile"><ProfilePage /></PageTransition>} />
+              <Route path="/dashboard" element={<PageTransition key="user-dashboard"><UserDashboard /></PageTransition>} />
+              <Route path="/admin" element={<PageTransition key="admin"><AdminDashboard /></PageTransition>} />
+              <Route path="/admin/login" element={<PageTransition key="admin-login"><AdminLogin /></PageTransition>} />
+              <Route path="/admin/dashboard" element={<PageTransition key="admin-dashboard"><AdminDashboard /></PageTransition>} />
+              <Route path="/video-editing" element={<PageTransition key="video-editing"><VideoEditingInterface /></PageTransition>} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
+              <Route path="*" element={<PageTransition key="not-found"><NotFound /></PageTransition>} />
             </Routes>
           </BrowserRouter>
         </TooltipProvider>

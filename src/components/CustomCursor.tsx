@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 
 const CustomCursor = () => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [trail, setTrail] = useState<Array<{ x: number; y: number; opacity: number }>>([]);
+  const [trail, setTrail] = useState<Array<{ x: number; y: number; opacity: number; size: number }>>([]);
   const [isVisible, setIsVisible] = useState(false);
   const rafRef = useRef<number>();
   const lastUpdateRef = useRef(0);
@@ -27,12 +27,13 @@ const CustomCursor = () => {
           
           setTrail(prev => {
             const newTrail = [
-              { x: currentPosition.x, y: currentPosition.y, opacity: 1 },
-              ...prev.slice(0, 5).map((point, index) => ({
+              { x: currentPosition.x, y: currentPosition.y, opacity: 1, size: 8 },
+              ...prev.slice(0, 10).map((point, index) => ({
                 ...point,
-                opacity: (5 - index) / 8
+                opacity: Math.max(0, point.opacity - 0.05),
+                size: Math.max(2, point.size - 0.2)
               }))
-            ];
+            ].filter(point => point.opacity > 0);
             return newTrail;
           });
           
@@ -62,16 +63,19 @@ const CustomCursor = () => {
 
   return (
     <div className="fixed inset-0 pointer-events-none z-[9999]">
-      {/* Trail effect */}
+      {/* Enhanced magnetic trail effect */}
       {trail.map((point, index) => (
         <div
           key={`trail-${index}`}
-          className="absolute w-2 h-2 bg-primary/50 rounded-full will-change-transform"
+          className="absolute bg-primary rounded-full will-change-transform"
           style={{
-            left: point.x - 4,
-            top: point.y - 4,
-            opacity: point.opacity * 0.5,
-            transform: `scale(${1 - index * 0.15}) translate3d(0, 0, 0)`,
+            left: point.x - point.size/2,
+            top: point.y - point.size/2,
+            width: point.size,
+            height: point.size,
+            opacity: point.opacity * 0.7,
+            boxShadow: `0 0 ${point.size}px hsl(var(--primary) / ${point.opacity * 0.5}), 0 0 ${point.size * 2}px hsl(var(--primary) / ${point.opacity * 0.3})`,
+            transform: `translate3d(0, 0, 0)`
           }}
         />
       ))}
