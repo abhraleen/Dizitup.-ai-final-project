@@ -1,0 +1,47 @@
+DIZITUP PROJECT - TEAMMATE ACCESS INSTRUCTIONS
+============================================
+
+YOUR PROJECT IS NOW HOSTED ON GITHUB!
+Repository URL: https://github.com/abhraleen/Dizitup.-ai-final-project
+
+INSTRUCTIONS FOR YOUR TEAMMATE:
+
+1. Install prerequisites:
+   - Git: https://git-scm.com/
+   - Node.js (version 16 or higher): https://nodejs.org/
+   - Qoder IDE (optional but recommended)
+
+2. Clone the repository:
+   Open terminal/command prompt and run:
+   git clone https://github.com/abhraleen/Dizitup.-ai-final-project.git
+
+3. Navigate to the project folder:
+   cd Dizitup.-ai-final-project
+
+4. Install dependencies:
+   npm install
+
+5. Open in Qoder IDE:
+   - Open Qoder IDE
+   - Select "File" > "Open Folder"
+   - Choose the "Dizitup.-ai-final-project" folder
+
+6. Start development server:
+   npm run dev
+
+7. To make changes and share them back:
+   git add .
+   git commit -m "Description of your changes"
+   git push origin main
+
+That's it! Your teammate can now work on the project and share changes back to you through GitHub.
+
+COLLABORATION WORKFLOW:
+1. Before starting work: git pull origin main
+2. Make changes in Qoder IDE
+3. Save your changes regularly
+4. Share changes back:
+   git add .
+   git commit -m "Description of changes"
+   git push origin main
+5. You can pull their changes with: git pull origin main
