@@ -224,36 +224,42 @@ const FluidDynamicBackground = () => {
         }
         
         // Draw particle with glow
-        const lifeRatio = particle.life / particle.maxLife;
-        const size = particle.size * lifeRatio;
+        const lifeRatio = Math.max(0, particle.life / particle.maxLife); // Ensure non-negative
+        const size = Math.max(0.1, particle.size * lifeRatio); // Ensure minimum size to prevent negative radius
         
         // Create radial gradient for glow effect based on color type
-        const gradient = ctx.createRadialGradient(
-          particle.x, particle.y, 0,
-          particle.x, particle.y, size
-        );
+        // Ensure radii are positive to prevent IndexSizeError
+        const innerRadius = 0;
+        const outerRadius = Math.max(0.1, size); // Ensure minimum radius of 0.1
         
-        if (particle.colorType === 0) {
-          // Red particles
-          gradient.addColorStop(0, `hsla(0, 100%, 70%, ${lifeRatio * 0.8})`);
-          gradient.addColorStop(0.5, `hsla(0, 100%, 50%, ${lifeRatio * 0.4})`);
-          gradient.addColorStop(1, `hsla(0, 100%, 30%, 0)`);
-        } else if (particle.colorType === 1) {
-          // Silver particles
-          gradient.addColorStop(0, `hsla(0, 0%, 85%, ${lifeRatio * 0.6})`);
-          gradient.addColorStop(0.5, `hsla(0, 0%, 70%, ${lifeRatio * 0.3})`);
-          gradient.addColorStop(1, `hsla(0, 0%, 50%, 0)`);
-        } else {
-          // Black particles
-          gradient.addColorStop(0, `hsla(0, 0%, 20%, ${lifeRatio * 0.4})`);
-          gradient.addColorStop(0.5, `hsla(0, 0%, 15%, ${lifeRatio * 0.2})`);
-          gradient.addColorStop(1, `hsla(0, 0%, 10%, 0)`);
+        if (outerRadius > 0 && particle.x >= 0 && particle.y >= 0) {
+          const gradient = ctx.createRadialGradient(
+            particle.x, particle.y, innerRadius,
+            particle.x, particle.y, outerRadius
+          );
+          
+          if (particle.colorType === 0) {
+            // Red particles
+            gradient.addColorStop(0, `hsla(0, 100%, 70%, ${lifeRatio * 0.8})`);
+            gradient.addColorStop(0.5, `hsla(0, 100%, 50%, ${lifeRatio * 0.4})`);
+            gradient.addColorStop(1, `hsla(0, 100%, 30%, 0)`);
+          } else if (particle.colorType === 1) {
+            // Silver particles
+            gradient.addColorStop(0, `hsla(0, 0%, 85%, ${lifeRatio * 0.6})`);
+            gradient.addColorStop(0.5, `hsla(0, 0%, 70%, ${lifeRatio * 0.3})`);
+            gradient.addColorStop(1, `hsla(0, 0%, 50%, 0)`);
+          } else {
+            // Black particles
+            gradient.addColorStop(0, `hsla(0, 0%, 20%, ${lifeRatio * 0.4})`);
+            gradient.addColorStop(0.5, `hsla(0, 0%, 15%, ${lifeRatio * 0.2})`);
+            gradient.addColorStop(1, `hsla(0, 0%, 10%, 0)`);
+          }
+          
+          ctx.fillStyle = gradient;
+          ctx.beginPath();
+          ctx.arc(particle.x, particle.y, outerRadius, 0, Math.PI * 2);
+          ctx.fill();
         }
-        
-        ctx.fillStyle = gradient;
-        ctx.beginPath();
-        ctx.arc(particle.x, particle.y, size, 0, Math.PI * 2);
-        ctx.fill();
       });
       
       // Draw flowing energy lines with red, silver, and black gradient

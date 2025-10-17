@@ -10,17 +10,8 @@ const CinematicOpening = ({ onComplete }: CinematicOpeningProps) => {
   const [isVisible, setIsVisible] = useState(true);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number>();
-  const particlesRef = useRef<Array<{
-    x: number;
-    y: number;
-    size: number;
-    speedX: number;
-    speedY: number;
-    life: number;
-    maxLife: number;
-  }>>([]);
 
-  // Initialize canvas for fluid animation
+  // Initialize canvas for fluid water-like animation
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -37,51 +28,41 @@ const CinematicOpening = ({ onComplete }: CinematicOpeningProps) => {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    // Initialize particles
-    const initParticles = () => {
-      particlesRef.current = [];
-      for (let i = 0; i < 100; i++) {
-        particlesRef.current.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          size: 1 + Math.random() * 3,
-          speedX: (Math.random() - 0.5) * 0.5,
-          speedY: (Math.random() - 0.5) * 0.5,
-          life: Math.random() * 100,
-          maxLife: 100
-        });
-      }
-    };
-
-    initParticles();
-
-    // Animation loop
+    // Water ripple animation
     let time = 0;
     const animate = () => {
       if (!ctx || !canvas) return;
       
-      time += 0.01;
+      time += 0.02;
       
-      // Clear with subtle fade
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      // Clear with deep black background
+      ctx.fillStyle = '#000000';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
-      // Draw fluid waves
-      ctx.globalCompositeOperation = 'lighter';
+      // Create fluid water-like effect
+      ctx.globalCompositeOperation = 'screen';
       
-      // Draw multiple wave layers
+      // Draw multiple fluid layers
       for (let i = 0; i < 3; i++) {
-        const offsetX = Math.sin(time * 0.2 + i) * 50;
-        const offsetY = Math.cos(time * 0.15 + i) * 50;
-        const waveHeight = 30 + Math.sin(time * 0.1 + i) * 20;
+        const offsetX = Math.sin(time * 0.2 + i * 0.7) * 50;
+        const offsetY = Math.cos(time * 0.15 + i * 0.5) * 50;
+        const waveHeight = 15 + Math.sin(time * 0.1 + i) * 10;
         
         ctx.beginPath();
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = `rgba(220, 38, 38, ${0.1 + i * 0.05})`;
+        ctx.lineWidth = 1;
         
+        // Deep black to dark red gradient for water effect
+        const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        gradient.addColorStop(0, `rgba(0, 0, 0, ${0.1 + Math.sin(time + i) * 0.05})`);
+        gradient.addColorStop(0.5, `rgba(100, 0, 0, ${0.05 + Math.sin(time + i + 1) * 0.03})`);
+        gradient.addColorStop(1, `rgba(0, 0, 0, ${0.1 + Math.sin(time + i + 2) * 0.05})`);
+        ctx.strokeStyle = gradient;
+        
+        // Draw fluid wave pattern
         for (let x = 0; x < canvas.width; x += 5) {
           const y = (canvas.height / 2) + 
                    Math.sin(x * 0.01 + time * (0.5 + i * 0.2)) * waveHeight + 
+                   Math.cos(time * 0.3 + x * 0.008) * 15 +
                    offsetY;
           
           if (x === 0) {
@@ -93,46 +74,24 @@ const CinematicOpening = ({ onComplete }: CinematicOpeningProps) => {
         ctx.stroke();
       }
       
-      // Update and draw particles
-      particlesRef.current.forEach((particle, index) => {
-        // Update particle
-        particle.x += particle.speedX;
-        particle.y += particle.speedY;
-        particle.life -= 0.5;
+      // Draw subtle water ripples
+      for (let i = 0; i < 5; i++) {
+        const rippleX = (canvas.width / 6) * (i + 1);
+        const rippleY = canvas.height / 2 + Math.sin(time * 0.4 + i) * 30;
+        const rippleSize = 30 + Math.sin(time * 0.6 + i) * 20;
         
-        // Reset dead particles
-        if (particle.life <= 0 || 
-            particle.x < -50 || particle.x > canvas.width + 50 ||
-            particle.y < -50 || particle.y > canvas.height + 50) {
-          particlesRef.current[index] = {
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            size: 1 + Math.random() * 3,
-            speedX: (Math.random() - 0.5) * 0.5,
-            speedY: (Math.random() - 0.5) * 0.5,
-            life: 100,
-            maxLife: 100
-          };
-        }
-        
-        // Draw particle with glow
-        const lifeRatio = particle.life / particle.maxLife;
-        const size = particle.size * lifeRatio;
-        
-        // Create radial gradient for glow effect
-        const gradient = ctx.createRadialGradient(
-          particle.x, particle.y, 0,
-          particle.x, particle.y, size * 3
+        const rippleGradient = ctx.createRadialGradient(
+          rippleX, rippleY, 0,
+          rippleX, rippleY, rippleSize
         );
-        gradient.addColorStop(0, `rgba(220, 38, 38, ${lifeRatio * 0.6})`);
-        gradient.addColorStop(0.5, `rgba(220, 38, 38, ${lifeRatio * 0.3})`);
-        gradient.addColorStop(1, 'rgba(220, 38, 38, 0)');
+        rippleGradient.addColorStop(0, `rgba(180, 20, 20, ${0.1 + Math.sin(time + i) * 0.05})`);
+        rippleGradient.addColorStop(1, 'rgba(180, 20, 20, 0)');
         
-        ctx.fillStyle = gradient;
+        ctx.fillStyle = rippleGradient;
         ctx.beginPath();
-        ctx.arc(particle.x, particle.y, size * 3, 0, Math.PI * 2);
+        ctx.arc(rippleX, rippleY, rippleSize, 0, Math.PI * 2);
         ctx.fill();
-      });
+      }
       
       animationRef.current = requestAnimationFrame(animate);
     };
@@ -147,28 +106,28 @@ const CinematicOpening = ({ onComplete }: CinematicOpeningProps) => {
     };
   }, []);
 
-  // Progress through animation stages
+  // Progress through animation stages with smoother timing
   useEffect(() => {
     const timers = [
       // Stage 0: Initial black screen (0-1 seconds)
       setTimeout(() => setStage(1), 1000),
       
-      // Stage 1: Liquid black waves slowly moving (1-3 seconds)
-      setTimeout(() => setStage(2), 3000),
+      // Stage 1: Water ripples begin (1-2 seconds)
+      setTimeout(() => setStage(2), 2000),
       
-      // Stage 2: Dizitup.ai logo appears (3-5 seconds)
-      setTimeout(() => setStage(3), 5000),
+      // Stage 2: Dizitup.ai logo emerges (2-4 seconds)
+      setTimeout(() => setStage(3), 4000),
       
-      // Stage 3: "Welcome to the Future of AI" text (5-7 seconds)
-      setTimeout(() => setStage(4), 7000),
+      // Stage 3: "Welcome to the Future of AI" text emerges (4-6 seconds)
+      setTimeout(() => setStage(4), 6000),
       
-      // Stage 4: "Let's build your business, intelligently" text (7-9 seconds)
-      setTimeout(() => setStage(5), 9000),
+      // Stage 4: "Let's build your business, intelligently" text emerges (6-8 seconds)
+      setTimeout(() => setStage(5), 8000),
       
-      // Stage 5: Transition to main interface (9-10 seconds)
+      // Stage 5: Smooth transition to main interface (8-10 seconds)
       setTimeout(() => {
         setIsVisible(false);
-        setTimeout(onComplete, 1000);
+        setTimeout(onComplete, 1500);
       }, 10000)
     ];
 
@@ -183,7 +142,7 @@ const CinematicOpening = ({ onComplete }: CinematicOpeningProps) => {
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden">
-      {/* Canvas for fluid background animation */}
+      {/* Canvas for fluid water background animation */}
       <canvas
         ref={canvasRef}
         className="absolute inset-0 w-full h-full"
@@ -204,23 +163,27 @@ const CinematicOpening = ({ onComplete }: CinematicOpeningProps) => {
         </svg>
       </button>
 
-      {/* Main content with animation stages */}
+      {/* Main content with smooth emergence animation */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <AnimatePresence mode="wait">
           {stage >= 2 && (
             <motion.div
               key="logo"
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 1.2 }}
-              transition={{ duration: 1.5, ease: "easeOut" }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ 
+                duration: 1.5, 
+                ease: "easeInOut",
+                delay: 0.3
+              }}
               className="text-center mb-8"
             >
-              <h1 className="text-6xl md:text-8xl font-bold tracking-wider">
-                <span className="bg-gradient-to-r from-white via-red-200 to-red-500 bg-clip-text text-transparent">
+              <h1 className="text-5xl md:text-7xl font-bold tracking-wider">
+                <span className="bg-gradient-to-r from-white via-gray-200 to-red-300 bg-clip-text text-transparent">
                   DIZITUP
                 </span>
-                <span className="text-red-500">.AI</span>
+                <span className="text-red-400">.AI</span>
               </h1>
             </motion.div>
           )}
@@ -230,13 +193,17 @@ const CinematicOpening = ({ onComplete }: CinematicOpeningProps) => {
           {stage >= 3 && (
             <motion.div
               key="welcome-text"
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 1, delay: 0.5 }}
+              exit={{ opacity: 0, y: -30 }}
+              transition={{ 
+                duration: 1.2, 
+                ease: "easeInOut",
+                delay: 0.5
+              }}
               className="text-center"
             >
-              <p className="text-2xl md:text-3xl text-gray-300 font-light mb-4">
+              <p className="text-xl md:text-2xl text-gray-300 font-light mb-4 tracking-wide">
                 Welcome to the Future of AI
               </p>
             </motion.div>
@@ -247,13 +214,17 @@ const CinematicOpening = ({ onComplete }: CinematicOpeningProps) => {
           {stage >= 4 && (
             <motion.div
               key="business-text"
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 1, delay: 0.5 }}
+              exit={{ opacity: 0, y: -30 }}
+              transition={{ 
+                duration: 1.2, 
+                ease: "easeInOut",
+                delay: 0.7
+              }}
               className="text-center"
             >
-              <p className="text-xl md:text-2xl text-red-400 font-light">
+              <p className="text-lg md:text-xl text-red-300 font-light tracking-wide">
                 Let's build your business, intelligently
               </p>
             </motion.div>
@@ -261,21 +232,21 @@ const CinematicOpening = ({ onComplete }: CinematicOpeningProps) => {
         </AnimatePresence>
       </div>
 
-      {/* Glow effects */}
+      {/* Subtle water reflection effects */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-red-500/10 rounded-full blur-3xl animate-pulse-slow"></div>
-        <div className="absolute bottom-1/3 right-1/3 w-80 h-80 bg-red-500/15 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/3 left-1/4 w-64 h-64 bg-red-500/5 rounded-full blur-3xl animate-pulse-slow"></div>
+        <div className="absolute bottom-1/4 right-1/3 w-48 h-48 bg-red-500/5 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '1s' }}></div>
       </div>
 
       {/* Custom animation styles */}
       <style>{`
         @keyframes pulse-slow {
-          0% { opacity: 0.1; transform: scale(1); }
-          50% { opacity: 0.2; transform: scale(1.1); }
-          100% { opacity: 0.1; transform: scale(1); }
+          0% { opacity: 0.05; transform: scale(1); }
+          50% { opacity: 0.1; transform: scale(1.05); }
+          100% { opacity: 0.05; transform: scale(1); }
         }
         .animate-pulse-slow {
-          animation: pulse-slow 6s ease-in-out infinite;
+          animation: pulse-slow 8s ease-in-out infinite;
         }
       `}</style>
     </div>
