@@ -34,6 +34,18 @@ const AIDashboard = () => {
   }, []);
 
   const handleAITask = async (taskName: string, serviceType: string) => {
+    // For video editing, navigate directly to the video editing interface
+    if (serviceType === "video") {
+      navigate("/video-editing");
+      return;
+    }
+    
+    // For graphics design, navigate directly to the graphics design interface
+    if (serviceType === "design") {
+      navigate("/graphics-design");
+      return;
+    }
+    
     setProcessingTask(taskName);
     setIsProcessingModalOpen(true);
     
@@ -244,7 +256,7 @@ const AIDashboard = () => {
             style={{ transitionDelay: '900ms' }}
           >
             <SparkleButton
-              onClick={() => handleAITask("Video Editing", "video")}
+              onClick={() => navigate("/video-editing")}
               icon={<Play className="w-5 h-5" />}
               className="px-8 py-6 text-xl"
             >

@@ -18,6 +18,7 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 import VideoEditingInterface from "@/components/VideoEditingInterface";
+import GraphicsDesignInterface from "@/components/GraphicsDesignInterface";
 import AIDashboard from "@/pages/AIDashboard";
 import Settings from "@/pages/Settings";
 import DiziChatbot from "@/components/DiziChatbot";
@@ -112,6 +113,7 @@ const App = () => (
               <Route path="/admin/login" element={<PageTransition key="admin-login"><AdminLogin /></PageTransition>} />
               <Route path="/admin/dashboard" element={<PageTransition key="admin-dashboard"><AdminDashboard /></PageTransition>} />
               <Route path="/video-editing" element={<PageTransition key="video-editing"><VideoEditingInterface /></PageTransition>} />
+              <Route path="/graphics-design" element={<PageTransition key="graphics-design"><GraphicsDesignInterface /></PageTransition>} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<PageTransition key="not-found"><NotFound /></PageTransition>} />
             </Routes>
