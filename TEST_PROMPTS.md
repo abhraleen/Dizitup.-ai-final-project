@@ -54,7 +54,7 @@
    - Unique visuals
 
 10. **"Tropical beach with palm trees, crystal clear water, sunny day, paradise island"**
-    - Vacation/travel theme
+    - Vacationits /travel theme
     - Bright and cheerful
 
 ---
